@@ -3519,6 +3519,7 @@
         let currentViewMode = 'list';
         let touchStartX = 0;
         let touchStartY = 0;
+        let touchEndX = 0;
         let currentSwipingCard = null;
         let quickFiltersActive = {};
 
@@ -5334,9 +5335,6 @@
         }
 
         // Обработчики свайпов для галереи
-        let touchStartX = 0;
-        let touchEndX = 0;
-
         elements.galleryCurrentImage.addEventListener('touchstart', e => {
             touchStartX = e.changedTouches[0].screenX;
         });
