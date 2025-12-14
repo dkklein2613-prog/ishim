@@ -2987,8 +2987,6 @@
             <button id="closeSearchBtn" class="close-search-btn-inline" onclick="closeSearchFully()">
                 <i data-feather="x"></i>
             </button>
-            <!-- Подсказки поиска -->
-            <div id="searchSuggestions" class="search-suggestions hidden"></div>
         </div>
 
         <!-- Loading -->
@@ -6589,14 +6587,12 @@
         function closeSearchFully() {
             const container = document.getElementById('searchInputContainer');
             const searchInput = document.getElementById('searchInputHeader');
-            const suggestions = document.getElementById('searchSuggestions');
             
             // Очищаем поле
             searchInput.value = '';
             
-            // Скрываем строку поиска и подсказки
+            // Скрываем строку поиска
             container.classList.add('hidden');
-            suggestions.classList.add('hidden');
             
             // Всегда очищаем результаты поиска и возвращаемся к последней странице
             isSearching = false;
@@ -6614,15 +6610,11 @@
                     clearTimeout(searchTimeout);
                     
                     if (query.length >= 2) {
-                        // Показываем подсказки
-                        showSearchSuggestions(query);
-                        
+                        // Автоматический поиск с задержкой
                         searchTimeout = setTimeout(() => {
                             performSearch(query);
                         }, 500);
                     } else if (query.length === 0) {
-                        // Скрываем подсказки
-                        document.getElementById('searchSuggestions').classList.add('hidden');
                         // Если поле очищено, восстанавливаем состояние
                         if (isSearching) {
                             isSearching = false;
