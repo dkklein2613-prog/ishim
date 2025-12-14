@@ -1004,6 +1004,1007 @@
         body.light-theme .menu-divider {
             background: var(--border-color);
         }
+
+        /* ========== НОВЫЕ УЛУЧШЕНИЯ UX ========== */
+        
+        /* 1. Анимация сердечка при добавлении в избранное */
+        @keyframes heartBeat {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.3); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+        
+        .favorite-button.animating {
+            animation: heartBeat 0.6s ease-in-out;
+        }
+        
+        .favorite-button.price-changed {
+            animation: priceAlert 1s ease-in-out 3;
+        }
+        
+        @keyframes priceAlert {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
+            50% { box-shadow: 0 0 20px 10px rgba(251, 191, 36, 0.6); }
+        }
+        
+        /* Swipe actions для карточек товара */
+        .product-card {
+            position: relative;
+            touch-action: pan-y;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .product-card.swiping-left {
+            transform: translateX(-80px);
+        }
+        
+        .product-card.swiping-right {
+            transform: translateX(80px);
+        }
+        
+        .swipe-actions {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .swipe-actions.left {
+            right: 0;
+            background: linear-gradient(to left, #EF4444, #DC2626);
+        }
+        
+        .swipe-actions.right {
+            left: 0;
+            background: linear-gradient(to right, #10B981, #059669);
+        }
+        
+        .product-card.swiping-left .swipe-actions.left,
+        .product-card.swiping-right .swipe-actions.right {
+            opacity: 1;
+        }
+        
+        /* 2. Умные хлебные крошки с предпросмотром */
+        .breadcrumb-item {
+            position: relative;
+        }
+        
+        .breadcrumb-preview {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%) translateY(-10px);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 12px;
+            min-width: 300px;
+            max-width: 400px;
+            box-shadow: 0 12px 48px var(--shadow-color);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 1000;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        
+        .breadcrumb-item:hover .breadcrumb-preview {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+            pointer-events: auto;
+        }
+        
+        .breadcrumb-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .breadcrumb-preview-item {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .breadcrumb-preview-item:hover {
+            transform: scale(1.05);
+        }
+        
+        .breadcrumb-preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .breadcrumb-preview-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        
+        /* 3. Призрачный слой сравнения */
+        .ghost-comparison-layer {
+            position: fixed;
+            top: 80px;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            border-bottom: 2px solid var(--border-color);
+            padding: 12px;
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            z-index: 50;
+            box-shadow: 0 8px 32px var(--shadow-color);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            transform: translateY(-100%);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .ghost-comparison-layer.active {
+            transform: translateY(0);
+        }
+        
+        .ghost-product-card {
+            min-width: 200px;
+            max-width: 200px;
+            background: var(--bg-card);
+            border: 2px solid rgba(59, 130, 246, 0.5);
+            border-radius: 12px;
+            padding: 8px;
+            position: relative;
+            opacity: 0.85;
+            transition: all 0.3s;
+        }
+        
+        .ghost-product-card:hover {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+        
+        .ghost-product-card img {
+            width: 100%;
+            height: 120px;
+            object-fit: contain;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .ghost-product-info {
+            font-size: 12px;
+            color: var(--text-primary);
+        }
+        
+        .ghost-product-price {
+            font-weight: 700;
+            color: #10B981;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+        
+        .ghost-remove-btn {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #EF4444;
+            color: white;
+            border: 2px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        
+        .ghost-remove-btn:hover {
+            transform: scale(1.2);
+        }
+        
+        .ghost-toggle-btn {
+            position: absolute;
+            top: 8px;
+            right: 56px;
+            width: 32px;
+            height: 32px;
+            background: rgba(59, 130, 246, 0.2);
+            border: 2px solid rgba(59, 130, 246, 0.5);
+            border-radius: 8px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 20;
+        }
+        
+        .ghost-toggle-btn:hover {
+            background: rgba(59, 130, 246, 0.4);
+            transform: scale(1.1);
+        }
+        
+        .ghost-toggle-btn.active {
+            background: rgba(59, 130, 246, 0.6);
+        }
+        
+        /* 4. Временная линия для избранного */
+        .favorites-timeline {
+            padding: 20px 0;
+        }
+        
+        .timeline-group {
+            margin-bottom: 32px;
+            position: relative;
+        }
+        
+        .timeline-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            cursor: pointer;
+            padding: 12px;
+            border-radius: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+        
+        .timeline-header:hover {
+            background: var(--hover-bg);
+            transform: translateX(4px);
+        }
+        
+        .timeline-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+            flex-shrink: 0;
+        }
+        
+        .timeline-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            flex: 1;
+        }
+        
+        .timeline-count {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--text-primary);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .timeline-toggle {
+            transition: transform 0.3s;
+        }
+        
+        .timeline-group.collapsed .timeline-toggle {
+            transform: rotate(-90deg);
+        }
+        
+        .timeline-products {
+            margin-left: 8px;
+            padding-left: 20px;
+            border-left: 2px solid var(--border-color);
+            transition: all 0.3s;
+            max-height: 5000px;
+            overflow: hidden;
+        }
+        
+        .timeline-group.collapsed .timeline-products {
+            max-height: 0;
+            margin-bottom: 0;
+        }
+        
+        /* 5. Режим галерея-сетка */
+        .view-mode-toggle {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            z-index: 90;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 8px;
+            box-shadow: 0 8px 32px var(--shadow-color);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            display: flex;
+            gap: 4px;
+        }
+        
+        @media (min-width: 1024px) {
+            .view-mode-toggle {
+                bottom: 80px;
+            }
+        }
+        
+        .view-mode-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .view-mode-btn:hover {
+            background: var(--hover-bg);
+        }
+        
+        .view-mode-btn.active {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3B82F6;
+        }
+        
+        /* Режим компактной сетки */
+        .product-list.grid-dense {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        
+        @media (min-width: 768px) {
+            .product-list.grid-dense {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .product-list.grid-dense {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+        
+        .product-list.grid-dense .product-card {
+            cursor: pointer;
+        }
+        
+        .product-list.grid-dense .product-card .p-4 {
+            padding: 8px !important;
+        }
+        
+        .product-list.grid-dense .product-card h3 {
+            display: none;
+        }
+        
+        .product-list.grid-dense .product-card button:not(.favorite-button) {
+            display: none;
+        }
+        
+        .product-list.grid-dense .product-card .price-badge {
+            font-size: 11px;
+            padding: 2px 6px;
+        }
+        
+        /* 6. Контекстное меню через long press */
+        .context-menu {
+            position: fixed;
+            z-index: 9999;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .context-menu.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .context-menu-center {
+            position: relative;
+            width: 60px;
+            height: 60px;
+        }
+        
+        .context-menu-item {
+            position: absolute;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            transition: all 0.3s;
+            transform: scale(0);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        
+        .context-menu.active .context-menu-item {
+            transform: scale(1);
+        }
+        
+        .context-menu-item:hover {
+            transform: scale(1.2);
+            border-color: #3B82F6;
+        }
+        
+        .context-menu-item:nth-child(1) {
+            top: -70px;
+            left: 50%;
+            transform: translateX(-50%) scale(0);
+            transition-delay: 0.05s;
+        }
+        
+        .context-menu-item:nth-child(2) {
+            top: -50px;
+            right: -50px;
+            transition-delay: 0.1s;
+        }
+        
+        .context-menu-item:nth-child(3) {
+            right: -70px;
+            top: 50%;
+            transform: translateY(-50%) scale(0);
+            transition-delay: 0.15s;
+        }
+        
+        .context-menu-item:nth-child(4) {
+            bottom: -50px;
+            right: -50px;
+            transition-delay: 0.2s;
+        }
+        
+        .context-menu-item:nth-child(5) {
+            bottom: -70px;
+            left: 50%;
+            transform: translateX(-50%) scale(0);
+            transition-delay: 0.25s;
+        }
+        
+        .context-menu.active .context-menu-item:nth-child(1) {
+            transform: translateX(-50%) scale(1);
+        }
+        
+        .context-menu.active .context-menu-item:nth-child(3) {
+            transform: translateY(-50%) scale(1);
+        }
+        
+        .context-menu.active .context-menu-item:nth-child(5) {
+            transform: translateX(-50%) scale(1);
+        }
+        
+        .context-menu-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 9998;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        
+        .context-menu-backdrop.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        /* 7. Умная кнопка назад с превью */
+        .back-button-preview {
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 12px;
+            min-width: 300px;
+            max-width: 400px;
+            box-shadow: 0 12px 48px var(--shadow-color);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 1000;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        
+        .back-button:hover .back-button-preview {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        .back-preview-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 12px;
+            filter: blur(3px);
+            margin-bottom: 8px;
+        }
+        
+        .back-preview-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-align: center;
+        }
+        
+        /* Navigation Stack для умной кнопки назад */
+        .nav-stack-menu {
+            position: fixed;
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 12px;
+            min-width: 300px;
+            max-width: 400px;
+            box-shadow: 0 12px 48px var(--shadow-color);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 1000;
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+        }
+        
+        .nav-stack-menu.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        .nav-stack-item {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: background 0.2s;
+            color: var(--text-primary);
+        }
+        
+        .nav-stack-item:hover {
+            background: var(--hover-bg);
+        }
+        
+        .nav-stack-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--bg-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .nav-stack-text {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        /* 8. Прогрессивное раскрытие карточек */
+        .product-card.compact {
+            cursor: pointer;
+        }
+        
+        .product-card.compact .product-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .product-card.expanded .product-details {
+            max-height: 500px;
+        }
+        
+        .product-card.compact .p-4 {
+            padding-bottom: 12px !important;
+        }
+        
+        .product-expand-indicator {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(59, 130, 246, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #3B82F6;
+            transition: transform 0.3s;
+        }
+        
+        .product-card.expanded .product-expand-indicator {
+            transform: rotate(180deg);
+        }
+        
+        /* Свайп между товарами в раскрытом состоянии */
+        .product-card.expanded {
+            position: relative;
+        }
+        
+        .product-swipe-hint {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        
+        .product-card.expanded:hover .product-swipe-hint {
+            opacity: 1;
+        }
+        
+        .product-swipe-hint.left {
+            left: 10px;
+        }
+        
+        .product-swipe-hint.right {
+            right: 10px;
+        }
+        
+        /* 9. Плавающая информационная панель */
+        .floating-info-panel {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 12px 16px;
+            box-shadow: 0 8px 32px var(--shadow-color);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            opacity: 0;
+            transform: translateY(20px) scale(0.9);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: none;
+            z-index: 80;
+            min-width: 200px;
+            cursor: pointer;
+        }
+        
+        @media (min-width: 1024px) {
+            .floating-info-panel {
+                bottom: 160px;
+            }
+        }
+        
+        .floating-info-panel.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+        
+        .floating-info-panel:hover {
+            transform: translateY(-4px) scale(1.02);
+        }
+        
+        .floating-info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .floating-info-row:last-child {
+            margin-bottom: 0;
+        }
+        
+        .floating-info-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .floating-info-value {
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+        
+        .floating-info-filters {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-color);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        
+        .floating-filter-btn {
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-primary);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .floating-filter-btn:hover {
+            background: var(--hover-bg);
+            border-color: #3B82F6;
+        }
+        
+        .floating-filter-btn.active {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: #3B82F6;
+            color: #3B82F6;
+        }
+        
+        /* 10. Визуальные закладки в скролле */
+        .scroll-bookmarks {
+            position: fixed;
+            right: 4px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 70;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .scroll-bookmarks.visible {
+            opacity: 1;
+        }
+        
+        .scroll-bookmark {
+            width: 8px;
+            height: 40px;
+            background: rgba(59, 130, 246, 0.3);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .scroll-bookmark:hover {
+            width: 12px;
+            background: rgba(59, 130, 246, 0.6);
+        }
+        
+        .scroll-bookmark.user-created {
+            background: linear-gradient(180deg, #F59E0B 0%, #D97706 100%);
+        }
+        
+        .scroll-bookmark.user-created:hover {
+            width: 12px;
+            background: linear-gradient(180deg, #FBBF24 0%, #F59E0B 100%);
+        }
+        
+        .scroll-bookmark-tooltip {
+            position: absolute;
+            right: calc(100% + 8px);
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            color: var(--text-primary);
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        
+        .scroll-bookmark:hover .scroll-bookmark-tooltip {
+            opacity: 1;
+        }
+        
+        /* 11. Улучшенный поиск с визуальными подсказками */
+        .search-suggestion-item.enhanced {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+        }
+        
+        .search-suggestion-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+        
+        .search-suggestion-content {
+            flex: 1;
+        }
+        
+        .search-suggestion-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+        
+        .search-suggestion-category {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        .search-suggestion-price {
+            font-size: 13px;
+            font-weight: 700;
+            color: #10B981;
+            flex-shrink: 0;
+        }
+        
+        .search-tags-cloud {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .search-tag {
+            padding: 6px 12px;
+            border-radius: 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .search-tag:hover {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: #3B82F6;
+            transform: translateY(-2px);
+        }
+        
+        .search-results-grouped {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .search-group {
+            margin-bottom: 16px;
+        }
+        
+        .search-group-header {
+            padding: 8px 16px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .search-group-header:hover {
+            background: var(--hover-bg);
+        }
+        
+        .search-group-toggle {
+            transition: transform 0.3s;
+        }
+        
+        .search-group.collapsed .search-group-toggle {
+            transform: rotate(-90deg);
+        }
+        
+        .search-group-items {
+            max-height: 500px;
+            overflow: hidden;
+            transition: max-height 0.3s;
+        }
+        
+        .search-group.collapsed .search-group-items {
+            max-height: 0;
+        }
+        
+        /* Адаптация для мобильных */
+        @media (max-width: 767px) {
+            .breadcrumb-preview {
+                min-width: 280px;
+                max-width: calc(100vw - 32px);
+            }
+            
+            .floating-info-panel {
+                bottom: 70px;
+                right: 10px;
+                min-width: 160px;
+            }
+            
+            .view-mode-toggle {
+                bottom: 70px;
+                right: 10px;
+            }
+            
+            .ghost-comparison-layer {
+                top: 60px;
+                padding: 8px;
+            }
+            
+            .ghost-product-card {
+                min-width: 150px;
+                max-width: 150px;
+            }
+            
+            .nav-stack-menu {
+                min-width: calc(100vw - 32px);
+                max-width: calc(100vw - 32px);
+            }
+        }
+        
+        /* Адаптация для десктопа */
+        @media (min-width: 1024px) {
+            .context-menu-item {
+                width: 56px;
+                height: 56px;
+            }
+            
+            .floating-info-panel {
+                min-width: 250px;
+            }
+            
+            .ghost-product-card {
+                min-width: 220px;
+                max-width: 220px;
+            }
+        }
         
         /* Стили для бокового меню */
         #sideMenu > div {
@@ -3237,6 +4238,94 @@
         </div>
         
         <!-- Карусель товаров удалена -->
+        
+        <!-- ========== НОВЫЕ UX КОМПОНЕНТЫ ========== -->
+        
+        <!-- Призрачный слой сравнения -->
+        <div id="ghostComparisonLayer" class="ghost-comparison-layer">
+            <!-- Сюда будут добавляться призрачные карточки товаров -->
+        </div>
+        
+        <!-- Кнопка переключения призрачного слоя -->
+        <button id="ghostToggleBtn" class="ghost-toggle-btn hidden" onclick="toggleGhostLayer()" title="Сравнение товаров">
+            <i data-feather="layers"></i>
+        </button>
+        
+        <!-- Плавающая информационная панель -->
+        <div id="floatingInfoPanel" class="floating-info-panel">
+            <div class="floating-info-row">
+                <span class="floating-info-label">Товаров:</span>
+                <span class="floating-info-value" id="floatingProductCount">0</span>
+            </div>
+            <div class="floating-info-row">
+                <span class="floating-info-label">Ср. цена:</span>
+                <span class="floating-info-value" id="floatingAvgPrice">-</span>
+            </div>
+            <div class="floating-info-filters" id="floatingFilters">
+                <button class="floating-filter-btn" onclick="applyQuickFilter('price-low')">
+                    <i data-feather="arrow-down" style="width: 12px; height: 12px;"></i> Дешевле
+                </button>
+                <button class="floating-filter-btn" onclick="applyQuickFilter('price-high')">
+                    <i data-feather="arrow-up" style="width: 12px; height: 12px;"></i> Дороже
+                </button>
+                <button class="floating-filter-btn" onclick="applyQuickFilter('with-photo')">
+                    <i data-feather="image" style="width: 12px; height: 12px;"></i> С фото
+                </button>
+                <button class="floating-filter-btn" onclick="applyQuickFilter('reset')">
+                    <i data-feather="x" style="width: 12px; height: 12px;"></i> Сброс
+                </button>
+            </div>
+        </div>
+        
+        <!-- Переключатель режимов просмотра -->
+        <div id="viewModeToggle" class="view-mode-toggle hidden">
+            <button class="view-mode-btn active" data-mode="list" onclick="switchViewMode('list')" title="Список">
+                <i data-feather="list"></i>
+            </button>
+            <button class="view-mode-btn" data-mode="grid" onclick="switchViewMode('grid')" title="Сетка 2x2">
+                <i data-feather="grid"></i>
+            </button>
+            <button class="view-mode-btn" data-mode="grid-dense" onclick="switchViewMode('grid-dense')" title="Плотная сетка 3x3">
+                <i data-feather="maximize-2"></i>
+            </button>
+        </div>
+        
+        <!-- Визуальные закладки в скролле -->
+        <div id="scrollBookmarks" class="scroll-bookmarks">
+            <!-- Сюда будут добавляться закладки автоматически -->
+        </div>
+        
+        <!-- Контекстное меню (long press) -->
+        <div id="contextMenuBackdrop" class="context-menu-backdrop" onclick="closeContextMenu()"></div>
+        <div id="contextMenu" class="context-menu">
+            <div class="context-menu-center"></div>
+            <button class="context-menu-item" onclick="contextMenuAction('share')" title="Поделиться">
+                <i data-feather="share-2"></i>
+            </button>
+            <button class="context-menu-item" onclick="contextMenuAction('favorite')" title="В избранное">
+                <i data-feather="heart"></i>
+            </button>
+            <button class="context-menu-item" onclick="contextMenuAction('compare')" title="Сравнить">
+                <i data-feather="layers"></i>
+            </button>
+            <button class="context-menu-item" onclick="contextMenuAction('ai')" title="Спросить AI">
+                <i data-feather="message-circle"></i>
+            </button>
+            <button class="context-menu-item" onclick="contextMenuAction('similar')" title="Похожие">
+                <i data-feather="copy"></i>
+            </button>
+        </div>
+        
+        <!-- Navigation Stack Menu для умной кнопки назад -->
+        <div id="navStackMenu" class="nav-stack-menu">
+            <div style="font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; padding: 0 12px;">
+                История навигации
+            </div>
+            <div id="navStackItems">
+                <!-- Сюда будут добавляться элементы стека навигации -->
+            </div>
+        </div>
+        
         </div>
     </div>
 
@@ -3299,6 +4388,19 @@
                 lon: 69.533416
             }
         };
+        
+        // ========== НОВЫЕ ПЕРЕМЕННЫЕ ДЛЯ UX УЛУЧШЕНИЙ ==========
+        let ghostComparisonProducts = [];
+        let currentViewMode = 'list';
+        let contextMenuTarget = null;
+        let longPressTimer = null;
+        let scrollBookmarksData = [];
+        let lastScrollTop = 0;
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let currentSwipingCard = null;
+        let expandedProductCard = null;
+        let quickFiltersActive = {};
 
         // DOM элементы
         const elements = {
@@ -3838,7 +4940,8 @@
                 return;
             }
 
-            renderFavorites();
+            // Используем временную линию для избранного
+            renderFavoritesWithTimeline();
             updateBackButton();
         }
 
@@ -4064,6 +5167,721 @@
             } else {
                 window.open(`https://t.me/GSValer88?text=${encodeURIComponent(message)}`, '_blank');
             }
+        }
+
+        // ========== НОВЫЕ UX ФУНКЦИИ ==========
+        
+        // 1. Тактильная обратная связь и микроанимации
+        async function enhancedToggleFavorite(product, productIndex) {
+            const button = document.querySelector(`[data-product-index="${productIndex}"] .favorite-button`);
+            
+            // Haptic feedback для Telegram
+            if (tg?.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('medium');
+            }
+            
+            // Анимация сердечка
+            if (button) {
+                button.classList.add('animating');
+                setTimeout(() => button.classList.remove('animating'), 600);
+            }
+            
+            // Вызываем оригинальную функцию
+            await toggleFavorite(product, productIndex);
+        }
+        
+        // Swipe actions для карточек
+        function initSwipeActions() {
+            document.addEventListener('touchstart', handleTouchStart, { passive: true });
+            document.addEventListener('touchmove', handleTouchMove, { passive: false });
+            document.addEventListener('touchend', handleTouchEnd, { passive: true });
+        }
+        
+        function handleTouchStart(e) {
+            const card = e.target.closest('.product-card');
+            if (!card) return;
+            
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            currentSwipingCard = card;
+        }
+        
+        function handleTouchMove(e) {
+            if (!currentSwipingCard) return;
+            
+            const touchX = e.touches[0].clientX;
+            const touchY = e.touches[0].clientY;
+            const deltaX = touchX - touchStartX;
+            const deltaY = touchY - touchStartY;
+            
+            // Проверяем что свайп горизонтальный
+            if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 30) {
+                e.preventDefault();
+                
+                if (deltaX < -30) {
+                    currentSwipingCard.classList.add('swiping-left');
+                    currentSwipingCard.classList.remove('swiping-right');
+                } else if (deltaX > 30) {
+                    currentSwipingCard.classList.add('swiping-right');
+                    currentSwipingCard.classList.remove('swiping-left');
+                }
+            }
+        }
+        
+        function handleTouchEnd(e) {
+            if (!currentSwipingCard) return;
+            
+            const deltaX = e.changedTouches[0].clientX - touchStartX;
+            
+            if (deltaX < -100) {
+                // Удалить из избранного
+                const productIndex = currentSwipingCard.dataset.productIndex;
+                if (productIndex !== undefined) {
+                    const product = currentProducts[productIndex];
+                    if (product) {
+                        toggleFavorite(product, productIndex);
+                    }
+                }
+            } else if (deltaX > 100) {
+                // Добавить в избранное
+                const productIndex = currentSwipingCard.dataset.productIndex;
+                if (productIndex !== undefined) {
+                    const product = currentProducts[productIndex];
+                    if (product) {
+                        toggleFavorite(product, productIndex);
+                    }
+                }
+            }
+            
+            // Сброс состояния
+            currentSwipingCard.classList.remove('swiping-left', 'swiping-right');
+            currentSwipingCard = null;
+        }
+        
+        // 2. Призрачный слой сравнения
+        function toggleGhostLayer() {
+            const layer = document.getElementById('ghostComparisonLayer');
+            const btn = document.getElementById('ghostToggleBtn');
+            
+            layer.classList.toggle('active');
+            btn.classList.toggle('active');
+        }
+        
+        function addToGhostComparison(product) {
+            if (ghostComparisonProducts.length >= 3) {
+                if (tg) {
+                    tg.showAlert('Максимум 3 товара для сравнения');
+                } else {
+                    alert('Максимум 3 товара для сравнения');
+                }
+                return;
+            }
+            
+            ghostComparisonProducts.push(product);
+            renderGhostLayer();
+            
+            const btn = document.getElementById('ghostToggleBtn');
+            btn.classList.remove('hidden');
+            
+            if (tg?.HapticFeedback) {
+                tg.HapticFeedback.notificationOccurred('success');
+            }
+        }
+        
+        function renderGhostLayer() {
+            const layer = document.getElementById('ghostComparisonLayer');
+            
+            if (ghostComparisonProducts.length === 0) {
+                document.getElementById('ghostToggleBtn').classList.add('hidden');
+                return;
+            }
+            
+            let html = '';
+            ghostComparisonProducts.forEach((product, index) => {
+                html += `
+                    <div class="ghost-product-card">
+                        <div class="ghost-remove-btn" onclick="removeFromGhostComparison(${index})">×</div>
+                        <img src="${escapeHtml(product.photo_url || '')}" alt="${escapeHtml(product.color || '')}">
+                        <div class="ghost-product-info">${escapeHtml(product.color || 'Товар')}</div>
+                        <div class="ghost-product-price">${escapeHtml(product.price || '')}</div>
+                    </div>
+                `;
+            });
+            
+            layer.innerHTML = html;
+        }
+        
+        function removeFromGhostComparison(index) {
+            ghostComparisonProducts.splice(index, 1);
+            renderGhostLayer();
+            
+            if (ghostComparisonProducts.length === 0) {
+                const layer = document.getElementById('ghostComparisonLayer');
+                layer.classList.remove('active');
+            }
+        }
+        
+        // 3. Временная линия для избранного
+        function renderFavoritesWithTimeline() {
+            if (!favorites || favorites.length === 0) {
+                showEmptyState('В избранном пока нет товаров');
+                return;
+            }
+            
+            // Группируем избранное по датам
+            const groups = {};
+            const now = Date.now();
+            
+            favorites.forEach(fav => {
+                const timestamp = fav.timestamp || now;
+                const date = new Date(timestamp);
+                const today = new Date();
+                const yesterday = new Date(today);
+                yesterday.setDate(yesterday.getDate() - 1);
+                
+                let groupKey;
+                if (date.toDateString() === today.toDateString()) {
+                    groupKey = 'Сегодня';
+                } else if (date.toDateString() === yesterday.toDateString()) {
+                    groupKey = 'Вчера';
+                } else if (now - timestamp < 7 * 24 * 60 * 60 * 1000) {
+                    const days = Math.floor((now - timestamp) / (24 * 60 * 60 * 1000));
+                    groupKey = `${days} ${days === 1 ? 'день' : 'дня'} назад`;
+                } else {
+                    groupKey = date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
+                }
+                
+                if (!groups[groupKey]) {
+                    groups[groupKey] = [];
+                }
+                groups[groupKey].push(fav);
+            });
+            
+            let html = '<div class="favorites-timeline">';
+            
+            Object.entries(groups).forEach(([groupName, items]) => {
+                html += `
+                    <div class="timeline-group" data-group="${escapeHtml(groupName)}">
+                        <div class="timeline-header" onclick="toggleTimelineGroup(this)">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-title">${escapeHtml(groupName)}</div>
+                            <div class="timeline-count">${items.length}</div>
+                            <i data-feather="chevron-down" class="timeline-toggle"></i>
+                        </div>
+                        <div class="timeline-products">
+                            <div class="product-list">
+                `;
+                
+                items.forEach((fav, index) => {
+                    html += renderFavoriteCard(fav, favorites.indexOf(fav));
+                });
+                
+                html += `
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            html += `
+                <button onclick="loadSections()" class="back-button">
+                    <i data-feather="arrow-left" class="w-4 h-4 mr-2"></i>
+                    Назад в каталог
+                </button>
+            `;
+            
+            elements.content.innerHTML = html;
+            scheduleFeatherReplace();
+        }
+        
+        function toggleTimelineGroup(header) {
+            const group = header.parentElement;
+            group.classList.toggle('collapsed');
+            scheduleFeatherReplace();
+        }
+        
+        function renderFavoriteCard(fav, index) {
+            const product = fav.product;
+            const navigation = fav.navigation;
+            
+            if (!product) return '';
+            
+            const color = safeString(product.color, 'Не указан');
+            const price = product.price ? formatPriceForBadge(product.price) : 'Цена не указана';
+            const photoUrl = safeString(product.photo_url);
+            let imageUrl = extractPhotoFilenameFromUrl(photoUrl);
+            const alternativeUrls = getAlternativeImageUrls(photoUrl);
+            
+            return `
+                <div class="product-card fade-in" data-product-index="${index}" onclick="openProductDetailFromFavorites(${index})">
+                    <div class="favorite-button active" onclick="event.stopPropagation(); toggleFavoriteFromFavorites('${fav.id}')">
+                        <i data-feather="heart"></i>
+                    </div>
+                    ${renderUniversalImage(imageUrl, alternativeUrls, color, photoUrl)}
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-3">
+                            <h3 class="font-semibold text-lg text-contrast">${escapeHtml(color)}</h3>
+                            ${price && price !== 'Цена не указана' ? `
+                                <span class="price-badge">${escapeHtml(price)}</span>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // 4. Режим галерея-сетка
+        function switchViewMode(mode) {
+            currentViewMode = mode;
+            const productList = document.querySelector('.product-list');
+            const buttons = document.querySelectorAll('.view-mode-btn');
+            
+            if (!productList) return;
+            
+            // Убираем все классы режимов
+            productList.classList.remove('grid-dense');
+            
+            // Добавляем нужный класс
+            if (mode === 'grid-dense') {
+                productList.classList.add('grid-dense');
+            }
+            
+            // Обновляем кнопки
+            buttons.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.mode === mode);
+            });
+            
+            // Сохраняем в localStorage
+            localStorage.setItem('viewMode', mode);
+        }
+        
+        // 5. Контекстное меню (long press)
+        function initContextMenu() {
+            document.addEventListener('touchstart', handleContextMenuStart, { passive: true });
+            document.addEventListener('touchend', handleContextMenuEnd, { passive: true });
+            document.addEventListener('touchmove', handleContextMenuMove, { passive: true });
+        }
+        
+        function handleContextMenuStart(e) {
+            const card = e.target.closest('.product-card');
+            if (!card) return;
+            
+            contextMenuTarget = card;
+            longPressTimer = setTimeout(() => {
+                showContextMenu(e.touches[0].clientX, e.touches[0].clientY, card);
+            }, 500);
+        }
+        
+        function handleContextMenuMove(e) {
+            if (longPressTimer) {
+                clearTimeout(longPressTimer);
+                longPressTimer = null;
+            }
+        }
+        
+        function handleContextMenuEnd(e) {
+            if (longPressTimer) {
+                clearTimeout(longPressTimer);
+                longPressTimer = null;
+            }
+        }
+        
+        function showContextMenu(x, y, card) {
+            const menu = document.getElementById('contextMenu');
+            const backdrop = document.getElementById('contextMenuBackdrop');
+            
+            menu.style.left = `${x - 30}px`;
+            menu.style.top = `${y - 30}px`;
+            
+            menu.classList.add('active');
+            backdrop.classList.add('active');
+            
+            if (tg?.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('heavy');
+            }
+            
+            scheduleFeatherReplace();
+        }
+        
+        function closeContextMenu() {
+            const menu = document.getElementById('contextMenu');
+            const backdrop = document.getElementById('contextMenuBackdrop');
+            
+            menu.classList.remove('active');
+            backdrop.classList.remove('active');
+            contextMenuTarget = null;
+        }
+        
+        function contextMenuAction(action) {
+            if (!contextMenuTarget) {
+                closeContextMenu();
+                return;
+            }
+            
+            const productIndex = contextMenuTarget.dataset.productIndex;
+            const product = currentProducts[productIndex];
+            
+            if (!product) {
+                closeContextMenu();
+                return;
+            }
+            
+            switch (action) {
+                case 'share':
+                    shareProduct(product);
+                    break;
+                case 'favorite':
+                    toggleFavorite(product, productIndex);
+                    break;
+                case 'compare':
+                    addToGhostComparison(product);
+                    break;
+                case 'ai':
+                    askAIAboutProduct(product);
+                    break;
+                case 'similar':
+                    findSimilarProducts(product);
+                    break;
+            }
+            
+            closeContextMenu();
+        }
+        
+        function shareProduct(product) {
+            const text = `${product.color || 'Товар'} - ${product.price || 'Цена по запросу'}`;
+            
+            if (tg) {
+                tg.switchInlineQuery(text, ['users', 'groups']);
+            } else if (navigator.share) {
+                navigator.share({
+                    title: 'СТРОЙБАТ - Товар',
+                    text: text
+                });
+            }
+        }
+        
+        function askAIAboutProduct(product) {
+            const message = `Расскажи подробнее про: ${product.color || 'этот товар'}`;
+            // Здесь можно добавить интеграцию с AI чатом
+            console.log('AI запрос:', message);
+        }
+        
+        function findSimilarProducts(product) {
+            // Поиск похожих товаров
+            console.log('Поиск похожих товаров для:', product);
+        }
+        
+        // 6. Умная кнопка назад с превью
+        function enhancedGoBack() {
+            // Показываем превью на hover добавлено в CSS
+            goBack();
+        }
+        
+        function showNavStackMenu() {
+            const menu = document.getElementById('navStackMenu');
+            const items = document.getElementById('navStackItems');
+            
+            if (navigationStack.length === 0) return;
+            
+            let html = '';
+            [...navigationStack].reverse().forEach((item, index) => {
+                const actualIndex = navigationStack.length - 1 - index;
+                html += `
+                    <div class="nav-stack-item" onclick="jumpToNavLevel(${actualIndex})">
+                        <div class="nav-stack-icon">
+                            <i data-feather="${getNavIcon(item.type)}"></i>
+                        </div>
+                        <div class="nav-stack-text">${escapeHtml(item.name)}</div>
+                    </div>
+                `;
+            });
+            
+            items.innerHTML = html;
+            menu.classList.add('active');
+            scheduleFeatherReplace();
+            
+            // Закрываем по клику вне меню
+            setTimeout(() => {
+                document.addEventListener('click', closeNavStackMenu, { once: true });
+            }, 100);
+        }
+        
+        function closeNavStackMenu() {
+            const menu = document.getElementById('navStackMenu');
+            menu.classList.remove('active');
+        }
+        
+        function jumpToNavLevel(index) {
+            // Переходим к выбранному уровню навигации
+            while (navigationStack.length > index + 1) {
+                navigationStack.pop();
+            }
+            
+            const item = navigationStack[index];
+            if (item) {
+                // Вызываем соответствующую функцию загрузки
+                switch (item.type) {
+                    case 'sections':
+                        loadCategories(item.sectionId, item.sectionName);
+                        break;
+                    case 'categories':
+                        loadModels(item.sectionId, item.sectionName, item.categoryId, item.categoryName);
+                        break;
+                    case 'models':
+                        loadSubmodels(item.sectionId, item.sectionName, item.categoryId, item.categoryName, item.modelId, item.modelName);
+                        break;
+                }
+            }
+            
+            closeNavStackMenu();
+        }
+        
+        function getNavIcon(type) {
+            const icons = {
+                'sections': 'folder',
+                'categories': 'grid',
+                'models': 'box',
+                'submodels': 'package'
+            };
+            return icons[type] || 'circle';
+        }
+        
+        // 7. Прогрессивное раскрытие карточек
+        function toggleProductCard(card) {
+            if (card.classList.contains('compact')) {
+                // Закрываем все другие раскрытые карточки
+                document.querySelectorAll('.product-card.expanded').forEach(c => {
+                    if (c !== card) {
+                        c.classList.remove('expanded');
+                        c.classList.add('compact');
+                    }
+                });
+                
+                card.classList.remove('compact');
+                card.classList.add('expanded');
+                expandedProductCard = card;
+                
+                // Прокручиваем карточку в центр
+                setTimeout(() => {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+            } else {
+                card.classList.add('compact');
+                card.classList.remove('expanded');
+                expandedProductCard = null;
+            }
+        }
+        
+        // 8. Плавающая информационная панель
+        function updateFloatingInfoPanel() {
+            const panel = document.getElementById('floatingInfoPanel');
+            
+            if (currentProducts.length === 0) {
+                panel.classList.remove('active');
+                return;
+            }
+            
+            // Показываем панель при скролле
+            let scrollTimeout;
+            window.addEventListener('scroll', () => {
+                panel.classList.add('active');
+                
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                    panel.classList.remove('active');
+                }, 3000);
+            });
+            
+            // Обновляем данные
+            const count = currentProducts.length;
+            const prices = currentProducts
+                .map(p => extractNumericPrice(p.price))
+                .filter(p => p !== Infinity);
+            
+            const avgPrice = prices.length > 0 
+                ? Math.round(prices.reduce((a, b) => a + b, 0) / prices.length)
+                : 0;
+            
+            document.getElementById('floatingProductCount').textContent = count;
+            document.getElementById('floatingAvgPrice').textContent = avgPrice > 0 ? `${avgPrice} р.` : '-';
+        }
+        
+        function applyQuickFilter(filterType) {
+            let filtered = [...currentProducts];
+            
+            switch (filterType) {
+                case 'price-low':
+                    filtered.sort((a, b) => extractNumericPrice(a.price) - extractNumericPrice(b.price));
+                    quickFiltersActive['price-low'] = true;
+                    quickFiltersActive['price-high'] = false;
+                    break;
+                case 'price-high':
+                    filtered.sort((a, b) => extractNumericPrice(b.price) - extractNumericPrice(a.price));
+                    quickFiltersActive['price-high'] = true;
+                    quickFiltersActive['price-low'] = false;
+                    break;
+                case 'with-photo':
+                    filtered = filtered.filter(p => p.photo_url && p.photo_url.trim() !== '');
+                    quickFiltersActive['with-photo'] = true;
+                    break;
+                case 'reset':
+                    quickFiltersActive = {};
+                    break;
+            }
+            
+            if (filterType === 'reset') {
+                renderAllProducts();
+            } else {
+                currentProducts = filtered;
+                renderAllProducts();
+            }
+            
+            // Обновляем активные кнопки фильтров
+            document.querySelectorAll('.floating-filter-btn').forEach(btn => {
+                const filter = btn.getAttribute('onclick').match(/'([^']+)'/)[1];
+                btn.classList.toggle('active', quickFiltersActive[filter] === true);
+            });
+        }
+        
+        // 9. Визуальные закладки в скролле
+        function initScrollBookmarks() {
+            let scrollTimeout;
+            const bookmarks = document.getElementById('scrollBookmarks');
+            
+            window.addEventListener('scroll', () => {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const scrollHeight = document.documentElement.scrollHeight;
+                const clientHeight = document.documentElement.clientHeight;
+                
+                // Показываем закладки при скролле
+                bookmarks.classList.add('visible');
+                
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                    bookmarks.classList.remove('visible');
+                }, 2000);
+                
+                // Автоматически создаем закладки каждые 1000px
+                if (scrollTop > lastScrollTop && scrollTop % 1000 < 50) {
+                    addAutoScrollBookmark(scrollTop);
+                }
+                
+                lastScrollTop = scrollTop;
+            });
+        }
+        
+        function addAutoScrollBookmark(scrollY) {
+            if (scrollBookmarksData.some(b => Math.abs(b.scrollY - scrollY) < 500)) {
+                return; // Слишком близко к существующей закладке
+            }
+            
+            scrollBookmarksData.push({
+                scrollY: scrollY,
+                userCreated: false
+            });
+            
+            renderScrollBookmarks();
+        }
+        
+        function addUserScrollBookmark() {
+            const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+            
+            scrollBookmarksData.push({
+                scrollY: scrollY,
+                userCreated: true
+            });
+            
+            renderScrollBookmarks();
+            
+            if (tg?.HapticFeedback) {
+                tg.HapticFeedback.notificationOccurred('success');
+            }
+        }
+        
+        function renderScrollBookmarks() {
+            const container = document.getElementById('scrollBookmarks');
+            const scrollHeight = document.documentElement.scrollHeight;
+            
+            let html = '';
+            scrollBookmarksData.forEach((bookmark, index) => {
+                const topPercent = (bookmark.scrollY / scrollHeight) * 100;
+                const className = bookmark.userCreated ? 'user-created' : '';
+                
+                html += `
+                    <div class="scroll-bookmark ${className}" 
+                         style="top: ${topPercent}%"
+                         onclick="jumpToScrollBookmark(${bookmark.scrollY})">
+                        <div class="scroll-bookmark-tooltip">
+                            ${bookmark.userCreated ? '📌 ' : ''}${Math.round(bookmark.scrollY)}px
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        function jumpToScrollBookmark(scrollY) {
+            window.scrollTo({
+                top: scrollY,
+                behavior: 'smooth'
+            });
+        }
+        
+        // Инициализация всех новых возможностей
+        function initAllEnhancements() {
+            initSwipeActions();
+            initContextMenu();
+            initScrollBookmarks();
+            
+            // Восстанавливаем режим просмотра из localStorage
+            const savedViewMode = localStorage.getItem('viewMode');
+            if (savedViewMode) {
+                switchViewMode(savedViewMode);
+            }
+            
+            // Показываем кнопки управления при загрузке товаров
+            const observer = new MutationObserver(() => {
+                const productList = document.querySelector('.product-list');
+                if (productList && currentProducts.length > 0) {
+                    document.getElementById('viewModeToggle')?.classList.remove('hidden');
+                    updateFloatingInfoPanel();
+                }
+                
+                // Добавляем long press на кнопки назад
+                const backButtons = document.querySelectorAll('.back-button');
+                backButtons.forEach(btn => {
+                    let backPressTimer = null;
+                    
+                    btn.addEventListener('touchstart', (e) => {
+                        backPressTimer = setTimeout(() => {
+                            e.preventDefault();
+                            showNavStackMenu();
+                            if (tg?.HapticFeedback) {
+                                tg.HapticFeedback.impactOccurred('heavy');
+                            }
+                        }, 500);
+                    });
+                    
+                    btn.addEventListener('touchend', () => {
+                        if (backPressTimer) {
+                            clearTimeout(backPressTimer);
+                        }
+                    });
+                    
+                    btn.addEventListener('touchmove', () => {
+                        if (backPressTimer) {
+                            clearTimeout(backPressTimer);
+                        }
+                    });
+                });
+            });
+            
+            observer.observe(document.getElementById('content'), {
+                childList: true,
+                subtree: true
+            });
         }
 
         // УНИВЕРСАЛЬНАЯ ФУНКЦИЯ ДЛЯ ОТОБРАЖЕНИЯ ИЗОБРАЖЕНИЙ
@@ -6690,23 +8508,57 @@
         }
 
         function renderSearchResults(query, products) {
+            // Группируем результаты по категориям
+            const grouped = {};
+            products.forEach(product => {
+                const categoryKey = product.category || 'Без категории';
+                if (!grouped[categoryKey]) {
+                    grouped[categoryKey] = [];
+                }
+                grouped[categoryKey].push(product);
+            });
+            
             let html = `
-                <p class="mb-3 text-sm" style="color: var(--text-primary);">
-                    Найдено товаров: <strong>${products.length}</strong>
-                </p>
-                <div class="product-list">
+                <div class="mb-4">
+                    <p class="mb-3 text-sm" style="color: var(--text-primary);">
+                        Найдено товаров: <strong>${products.length}</strong>
+                    </p>
+                </div>
+                
+                <!-- Облако популярных тегов поиска -->
+                <div class="search-tags-cloud" style="margin-bottom: 16px;">
+                    <div class="search-tag" onclick="performSearch('профлист')">Профлист</div>
+                    <div class="search-tag" onclick="performSearch('металлочерепица')">Металлочерепица</div>
+                    <div class="search-tag" onclick="performSearch('сайдинг')">Сайдинг</div>
+                    <div class="search-tag" onclick="performSearch('утеплитель')">Утеплитель</div>
+                    <div class="search-tag" onclick="performSearch('гвозди')">Гвозди</div>
+                </div>
+                
+                <!-- Сгруппированные результаты -->
+                <div class="search-results-grouped">
             `;
             
-            products.forEach((product, index) => {
-                const productId = generateProductId(product);
-                const isFavorite = favorites.some(fav => fav.id === productId);
-                const color = safeString(product.color, 'Не указан');
-                const price = product.price ? formatPriceForBadge(product.price) : 'Цена не указана';
-                const specialPrice = product.special_price ? formatPriceForBadge(product.special_price) : null;
-                const photoUrl = safeString(product.photo_url);
+            Object.entries(grouped).forEach(([category, items]) => {
+                html += `
+                    <div class="search-group">
+                        <div class="search-group-header">
+                            <span>${escapeHtml(category)} (${items.length})</span>
+                            <i data-feather="chevron-down" class="search-group-toggle"></i>
+                        </div>
+                        <div class="search-group-items">
+                            <div class="product-list" style="margin-top: 12px;">
+                `;
                 
-                const userId = tg?.initDataUnsafe?.user?.id;
-                const showSpecialPrice = userId && SPECIAL_PRICE_USER_IDS.includes(userId) && product.special_price && specialPrice;
+                items.forEach((product, index) => {
+                    const productId = generateProductId(product);
+                    const isFavorite = favorites.some(fav => fav.id === productId);
+                    const color = safeString(product.color, 'Не указан');
+                    const price = product.price ? formatPriceForBadge(product.price) : 'Цена не указана';
+                    const specialPrice = product.special_price ? formatPriceForBadge(product.special_price) : null;
+                    const photoUrl = safeString(product.photo_url);
+                    
+                    const userId = tg?.initDataUnsafe?.user?.id;
+                    const showSpecialPrice = userId && SPECIAL_PRICE_USER_IDS.includes(userId) && product.special_price && specialPrice;
                 
                 let imageUrl = extractPhotoFilenameFromUrl(photoUrl);
                 const alternativeUrls = getAlternativeImageUrls(photoUrl);
@@ -6755,13 +8607,35 @@
                         </div>
                     </div>
                 `;
+                });
+                
+                html += `
+                            </div>
+                        </div>
+                    </div>
+                `;
             });
             
-            html += '</div>';
+            html += `
+                </div>
+                <button onclick="closeSearchResults()" class="back-button">
+                    <i data-feather="arrow-left" class="w-4 h-4 mr-2"></i>
+                    Вернуться к каталогу
+                </button>
+            `;
             
             elements.content.innerHTML = html;
             currentProducts = products;
             scheduleFeatherReplace();
+            
+            // Добавляем функционал сворачивания групп
+            document.querySelectorAll('.search-group-header').forEach(header => {
+                header.addEventListener('click', () => {
+                    const group = header.parentElement;
+                    group.classList.toggle('collapsed');
+                    scheduleFeatherReplace();
+                });
+            });
         }
 
         function closeSearchResults() {
@@ -6791,6 +8665,9 @@
                 
                 // Инициализируем поиск
                 initSearch();
+                
+                // ========== ИНИЦИАЛИЗАЦИЯ НОВЫХ UX УЛУЧШЕНИЙ ==========
+                initAllEnhancements();
                 
                 const toggleMenuBtn = document.getElementById('toggleMenu');
                 const closeMenuBtn = document.getElementById('closeMenu');
