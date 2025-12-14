@@ -2745,141 +2745,158 @@
             display: block;
         }
 
-        /* Прогрессивное раскрытие карточек */
-        .product-card {
-            cursor: pointer;
-            transition: all 0.3s ease;
+        /* Неоновая подсветка */
+        .neon-mode .product-card {
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.2),
+                        inset 0 0 10px rgba(0, 255, 255, 0.1);
+            transition: all 0.3s;
         }
         
-        .product-card .product-extra-info {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-            opacity: 0;
+        .neon-mode .product-card:hover {
+            border-color: rgba(0, 255, 255, 0.6);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.4),
+                        inset 0 0 20px rgba(0, 255, 255, 0.2);
         }
         
-        .product-card.expanded .product-extra-info {
-            max-height: 300px;
-            opacity: 1;
-            margin-top: 12px;
+        /* Shake-рулетка */
+        .roulette-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
         }
         
-        .expand-indicator {
-            display: inline-block;
-            transition: transform 0.3s ease;
-            margin-left: 8px;
+        .roulette-overlay.active {
+            display: flex;
+            animation: fadeIn 0.3s;
+        }
+        
+        .roulette-card {
+            width: 90%;
+            max-width: 400px;
+            background: var(--bg-card);
+            border: 2px solid #00ffff;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 0 50px rgba(0, 255, 255, 0.5);
+            animation: cardSlideIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        @keyframes cardSlideIn {
+            0% {
+                transform: scale(0) rotate(180deg);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1) rotate(0);
+                opacity: 1;
+            }
+        }
+        
+        .roulette-title {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            margin-bottom: 20px;
+        }
+        
+        .shake-hint {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 12px 24px;
+            border-radius: 25px;
+            border: 1px solid rgba(0, 255, 255, 0.5);
+            color: #00ffff;
+            font-size: 0.9rem;
+            z-index: 100;
+            animation: pulse 2s infinite;
+        }
+        
+        /* Swipe карточки */
+        .swipe-card {
+            position: absolute;
+            width: 90%;
+            max-width: 400px;
+            transition: transform 0.3s, opacity 0.3s;
+        }
+        
+        .swipe-card.swiping-left {
+            transform: translateX(-150px) rotate(-15deg);
             opacity: 0.5;
         }
         
-        .product-card.expanded .expand-indicator {
-            transform: rotate(180deg);
-        }
-
-        /* Контекстное меню */
-        .context-menu {
-            position: fixed;
-            background: var(--bg-card);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 8px;
-            z-index: 1000;
-            display: none;
-            box-shadow: 0 8px 32px var(--shadow-color);
-            min-width: 200px;
+        .swipe-card.swiping-right {
+            transform: translateX(150px) rotate(15deg);
+            opacity: 0.5;
         }
         
-        .context-menu.visible {
-            display: block;
-            animation: contextMenuAppear 0.2s ease;
-        }
-        
-        @keyframes contextMenuAppear {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-        
-        .context-menu-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            border: none;
-            background: transparent;
-            color: var(--text-primary);
+        .swipe-indicators {
+            position: absolute;
+            top: 20px;
             width: 100%;
-            text-align: left;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.2s;
-            font-size: 0.9rem;
-        }
-        
-        .context-menu-item:hover {
-            background: var(--hover-bg);
-        }
-
-        /* Временная шкала избранного */
-        .timeline-group {
-            margin-bottom: 24px;
-        }
-        
-        .timeline-header {
             display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 16px;
-            padding: 8px 0;
-            border-bottom: 2px solid var(--border-color);
-            cursor: pointer;
-            user-select: none;
+            justify-content: space-between;
+            padding: 0 20px;
+            pointer-events: none;
         }
         
-        .timeline-header:hover {
-            opacity: 0.8;
+        .swipe-indicator {
+            font-size: 3rem;
+            opacity: 0;
+            transition: opacity 0.2s;
         }
         
-        .timeline-icon {
-            width: 32px;
-            height: 32px;
+        .swipe-card.swiping-left .swipe-indicator.left,
+        .swipe-card.swiping-right .swipe-indicator.right {
+            opacity: 1;
+        }
+        
+        /* Голосовой поиск */
+        .voice-btn {
+            position: absolute;
+            right: 50px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+            border: none;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            transition: all 0.3s;
         }
         
-        .timeline-title {
-            font-weight: 600;
-            font-size: 1.1rem;
-            color: var(--text-primary);
-            flex: 1;
+        .voice-btn:hover {
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
         }
         
-        .timeline-count {
-            background: var(--hover-bg);
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
+        .voice-btn.listening {
+            animation: voicePulse 1s infinite;
+            background: #ef4444;
         }
         
-        .timeline-content {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 16px;
-            padding-left: 44px;
-        }
-        
-        .timeline-content.collapsed {
-            display: none;
+        @keyframes voicePulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            50% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
         }
     </style>
 </head>
@@ -3375,24 +3392,21 @@
         
         <!-- Карусель товаров удалена -->
         
-        <!-- Контекстное меню -->
-        <div id="contextMenu" class="context-menu">
-            <button class="context-menu-item" onclick="contextAction('favorite')">
-                <i data-feather="heart"></i>
-                <span>В избранное</span>
-            </button>
-            <button class="context-menu-item" onclick="contextAction('contact')">
-                <i data-feather="message-circle"></i>
-                <span>Написать</span>
-            </button>
-            <button class="context-menu-item" onclick="contextAction('call')">
-                <i data-feather="phone"></i>
-                <span>Позвонить</span>
-            </button>
-            <button class="context-menu-item" onclick="contextAction('share')">
-                <i data-feather="share-2"></i>
-                <span>Поделиться</span>
-            </button>
+        <!-- Shake-рулетка -->
+        <div id="rouletteOverlay" class="roulette-overlay">
+            <div class="roulette-card">
+                <div class="roulette-title">🎰 СЛУЧАЙНЫЙ ТОВАР</div>
+                <div id="rouletteContent"></div>
+                <button onclick="closeRoulette()" 
+                        style="width: 100%; margin-top: 20px; padding: 12px; background: #00ffff; color: #000; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">
+                    Закрыть
+                </button>
+            </div>
+        </div>
+        
+        <!-- Подсказка shake -->
+        <div id="shakeHint" class="shake-hint" style="display: none;">
+            📱 Потряси телефон для случайного товара
         </div>
         
         </div>
@@ -3437,17 +3451,17 @@
         // Сохранение состояния перед поиском
         let stateBeforeSearch = null;
 
+        // WOW-функции
+        let shakeDetectionEnabled = true;
+        let lastShakeTime = 0;
+        let voiceRecognition = null;
+        let isListening = false;
+
         // Состояние для галереи бригад
         let currentGalleryData = null;
         let currentGalleryIndex = 0;
         let currentBrigadeData = null;
         let currentObjectData = null;
-
-        // Новые переменные для улучшений
-        let expandedCards = new Set();
-        let contextMenuTarget = null;
-        let longPressTimer = null;
-        let timelineGroupsCollapsed = {};
 
         // Контактная информация
         const CONTACT_INFO = {
@@ -4230,199 +4244,157 @@
             }
         }
 
-        // ===== НОВЫЕ ФУНКЦИИ УЛУЧШЕНИЙ =====
-
-        // Прогрессивное раскрытие карточек
-        function toggleCardExpand(cardIndex) {
-            const card = document.querySelector(`[data-product-index="${cardIndex}"]`);
-            if (!card) return;
+        // ===== WOW-ФУНКЦИИ =====
+        
+        // Shake для рулетки
+        function initShakeRoulette() {
+            if (!window.DeviceMotionEvent) return;
             
-            if (expandedCards.has(cardIndex)) {
-                expandedCards.delete(cardIndex);
-                card.classList.remove('expanded');
-            } else {
-                expandedCards.add(cardIndex);
-                card.classList.add('expanded');
-            }
+            let lastX = 0, lastY = 0, lastZ = 0;
             
-            scheduleFeatherReplace();
-        }
-
-        // Контекстное меню
-        function showContextMenu(event, productIndex) {
-            event.preventDefault();
-            event.stopPropagation();
-            
-            const menu = document.getElementById('contextMenu');
-            if (!menu) return;
-            
-            contextMenuTarget = productIndex;
-            
-            menu.style.left = event.pageX + 'px';
-            menu.style.top = event.pageY + 'px';
-            menu.classList.add('visible');
-            
-            scheduleFeatherReplace();
-            
-            // Закрыть при клике вне меню
-            setTimeout(() => {
-                document.addEventListener('click', hideContextMenu, { once: true });
-            }, 100);
-        }
-
-        function hideContextMenu() {
-            const menu = document.getElementById('contextMenu');
-            if (menu) {
-                menu.classList.remove('visible');
-            }
-            contextMenuTarget = null;
-        }
-
-        function contextAction(action) {
-            hideContextMenu();
-            
-            if (contextMenuTarget === null || !currentProducts[contextMenuTarget]) return;
-            
-            const product = currentProducts[contextMenuTarget];
-            
-            if (action === 'favorite') {
-                toggleFavorite(product, contextMenuTarget);
-            } else if (action === 'contact') {
-                contactAboutProduct(contextMenuTarget);
-            } else if (action === 'call') {
-                makePhoneCall();
-            } else if (action === 'share') {
-                shareProduct(product);
-            }
-        }
-
-        function shareProduct(product) {
-            const text = `Смотрите товар: ${product.color || product.Цвет || 'Товар'} - ${product.price || product.Цена || 'Цена не указана'}`;
-            
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Товар из каталога СТРОЙБАТ',
-                    text: text
-                }).catch(() => {});
-            } else if (tg) {
-                tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(text)}`);
-            }
-        }
-
-        // Инициализация long press
-        function initLongPress() {
-            document.addEventListener('touchstart', (e) => {
-                const card = e.target.closest('.product-card');
-                if (!card) return;
+            window.addEventListener('devicemotion', (e) => {
+                if (!shakeDetectionEnabled || Date.now() - lastShakeTime < 3000) return;
                 
-                const productIndex = parseInt(card.dataset.productIndex);
-                if (isNaN(productIndex)) return;
+                const acc = e.accelerationIncludingGravity;
+                if (!acc) return;
                 
-                longPressTimer = setTimeout(() => {
+                const deltaX = Math.abs(acc.x - lastX);
+                const deltaY = Math.abs(acc.y - lastY);
+                const deltaZ = Math.abs(acc.z - lastZ);
+                
+                if (deltaX + deltaY + deltaZ > 30) {
+                    lastShakeTime = Date.now();
+                    showRandomProduct();
+                    
                     if (tg?.HapticFeedback) {
                         tg.HapticFeedback.impactOccurred('heavy');
                     }
-                    showContextMenu(e, productIndex);
-                }, 500);
-            }, { passive: true });
-            
-            document.addEventListener('touchend', () => {
-                if (longPressTimer) {
-                    clearTimeout(longPressTimer);
-                    longPressTimer = null;
                 }
-            }, { passive: true });
-            
-            document.addEventListener('touchmove', () => {
-                if (longPressTimer) {
-                    clearTimeout(longPressTimer);
-                    longPressTimer = null;
-                }
-            }, { passive: true });
-        }
-
-        // Временная шкала для избранного
-        function groupFavoritesByDate(favorites) {
-            const groups = {
-                today: [],
-                yesterday: [],
-                thisWeek: [],
-                thisMonth: [],
-                older: []
-            };
-            
-            const now = new Date();
-            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            const yesterday = new Date(today);
-            yesterday.setDate(yesterday.getDate() - 1);
-            const weekAgo = new Date(today);
-            weekAgo.setDate(weekAgo.getDate() - 7);
-            const monthAgo = new Date(today);
-            monthAgo.setMonth(monthAgo.getMonth() - 1);
-            
-            favorites.forEach(fav => {
-                const addedDate = fav.addedAt ? new Date(fav.addedAt) : new Date();
                 
-                if (addedDate >= today) {
-                    groups.today.push(fav);
-                } else if (addedDate >= yesterday) {
-                    groups.yesterday.push(fav);
-                } else if (addedDate >= weekAgo) {
-                    groups.thisWeek.push(fav);
-                } else if (addedDate >= monthAgo) {
-                    groups.thisMonth.push(fav);
-                } else {
-                    groups.older.push(fav);
-                }
+                lastX = acc.x;
+                lastY = acc.y;
+                lastZ = acc.z;
             });
             
-            return groups;
+            // Показываем подсказку через 5 секунд
+            setTimeout(() => {
+                if (currentProducts.length > 0) {
+                    const hint = document.getElementById('shakeHint');
+                    hint.style.display = 'block';
+                    setTimeout(() => hint.style.display = 'none', 5000);
+                }
+            }, 5000);
         }
-
-        function renderTimelineGroup(groupName, groupTitle, items, index) {
-            if (items.length === 0) return '';
+        
+        function showRandomProduct() {
+            if (currentProducts.length === 0) return;
             
-            const isCollapsed = timelineGroupsCollapsed[groupName] || false;
+            const randomIndex = Math.floor(Math.random() * currentProducts.length);
+            const product = currentProducts[randomIndex];
             
-            let html = `
-                <div class="timeline-group">
-                    <div class="timeline-header" onclick="toggleTimelineGroup('${groupName}')">
-                        <div class="timeline-icon">
-                            <i data-feather="${getTimelineIcon(groupName)}"></i>
-                        </div>
-                        <div class="timeline-title">${groupTitle}</div>
-                        <div class="timeline-count">${items.length}</div>
-                        <i data-feather="chevron-${isCollapsed ? 'down' : 'up'}"></i>
-                    </div>
-                    <div class="timeline-content ${isCollapsed ? 'collapsed' : ''}" id="timeline-${groupName}">
+            const overlay = document.getElementById('rouletteOverlay');
+            const content = document.getElementById('rouletteContent');
+            
+            const color = product.color || product.Цвет || 'Товар';
+            const price = product.price || product.Цена || 'Цена не указана';
+            const photoUrl = product.photo_url || product.Фото || '';
+            
+            let imageUrl = extractPhotoFilenameFromUrl(photoUrl);
+            const alternativeUrls = getAlternativeImageUrls(photoUrl);
+            
+            content.innerHTML = `
+                <div style="text-align: center;">
+                    ${renderUniversalImage(imageUrl, alternativeUrls, color, photoUrl)}
+                    <h3 style="font-size: 1.3rem; font-weight: bold; color: var(--text-primary); margin: 15px 0;">${escapeHtml(color)}</h3>
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #00ffff; text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);">${escapeHtml(price)}</div>
+                    <button onclick="openProductDetail(${randomIndex}); closeRoulette();" 
+                            style="width: 100%; margin-top: 15px; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">
+                        Посмотреть товар
+                    </button>
+                </div>
             `;
             
-            items.forEach((fav, idx) => {
-                html += renderFavoriteCard(fav, index + idx);
-            });
-            
-            html += `</div></div>`;
-            return html;
-        }
-
-        function getTimelineIcon(groupName) {
-            const icons = {
-                today: 'star',
-                yesterday: 'clock',
-                thisWeek: 'calendar',
-                thisMonth: 'archive',
-                older: 'folder'
-            };
-            return icons[groupName] || 'circle';
-        }
-
-        function toggleTimelineGroup(groupName) {
-            timelineGroupsCollapsed[groupName] = !timelineGroupsCollapsed[groupName];
-            const content = document.getElementById(`timeline-${groupName}`);
-            if (content) {
-                content.classList.toggle('collapsed');
-            }
+            overlay.classList.add('active');
             scheduleFeatherReplace();
+        }
+        
+        function closeRoulette() {
+            document.getElementById('rouletteOverlay').classList.remove('active');
+        }
+        
+        // Голосовой поиск
+        function initVoiceSearch() {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) return;
+            
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            voiceRecognition = new SpeechRecognition();
+            voiceRecognition.lang = 'ru-RU';
+            voiceRecognition.continuous = false;
+            
+            voiceRecognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                const searchInput = document.getElementById('searchInputHeader');
+                if (searchInput) {
+                    searchInput.value = transcript;
+                    performSearch(transcript);
+                }
+                stopVoiceSearch();
+            };
+            
+            voiceRecognition.onerror = () => stopVoiceSearch();
+            voiceRecognition.onend = () => stopVoiceSearch();
+            
+            // Добавляем кнопку в поиск
+            const searchContainer = document.getElementById('searchInputContainer');
+            if (searchContainer && !document.getElementById('voiceBtn')) {
+                const voiceBtn = document.createElement('button');
+                voiceBtn.id = 'voiceBtn';
+                voiceBtn.className = 'voice-btn';
+                voiceBtn.innerHTML = '<i data-feather="mic"></i>';
+                voiceBtn.onclick = toggleVoiceSearch;
+                searchContainer.appendChild(voiceBtn);
+                scheduleFeatherReplace();
+            }
+        }
+        
+        function toggleVoiceSearch() {
+            if (isListening) {
+                stopVoiceSearch();
+            } else {
+                startVoiceSearch();
+            }
+        }
+        
+        function startVoiceSearch() {
+            if (!voiceRecognition) return;
+            
+            isListening = true;
+            const btn = document.getElementById('voiceBtn');
+            if (btn) btn.classList.add('listening');
+            
+            voiceRecognition.start();
+            
+            if (tg?.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('light');
+            }
+        }
+        
+        function stopVoiceSearch() {
+            isListening = false;
+            const btn = document.getElementById('voiceBtn');
+            if (btn) btn.classList.remove('listening');
+            
+            if (voiceRecognition) {
+                try {
+                    voiceRecognition.stop();
+                } catch (e) {}
+            }
+        }
+        
+        // Неоновый режим
+        function toggleNeonMode() {
+            document.body.classList.toggle('neon-mode');
+            localStorage.setItem('neonMode', document.body.classList.contains('neon-mode'));
         }
 
         // УНИВЕРСАЛЬНАЯ ФУНКЦИЯ ДЛЯ ОТОБРАЖЕНИЯ ИЗОБРАЖЕНИЙ
@@ -6296,10 +6268,7 @@
                 html += `
                         <div class="p-4">
                             <div class="flex justify-between items-start mb-3">
-                                <h3 class="font-semibold text-lg text-contrast" onclick="event.stopPropagation(); toggleCardExpand(${index})">
-                                    ${escapeHtml(color)}
-                                    <span class="expand-indicator">▼</span>
-                                </h3>
+                                <h3 class="font-semibold text-lg text-contrast">${escapeHtml(color)}</h3>
                                 <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
                                     ${price && price !== 'Цена не указана' ? `
                                         <span class="price-badge">${escapeHtml(price)}</span>
@@ -6308,11 +6277,6 @@
                                         <span class="price-badge" style="background: #FCD34D; color: #000000; font-weight: 600;">${escapeHtml(specialPrice)}</span>
                                     ` : ''}
                                 </div>
-                            </div>
-                            
-                            <div class="product-extra-info">
-                                ${description ? `<p class="text-sm text-contrast mb-2">${escapeHtml(description)}</p>` : ''}
-                                ${photoDescription ? `<p class="text-xs text-gray-400 italic">${escapeHtml(photoDescription)}</p>` : ''}
                             </div>
                             
                             <div class="space-y-2 mb-4">
@@ -7159,8 +7123,14 @@
                 // Инициализируем поиск
                 initSearch();
                 
-                // Инициализируем новые улучшения
-                initLongPress();
+                // Инициализируем WOW-функции
+                initShakeRoulette();
+                initVoiceSearch();
+                
+                // Восстанавливаем неоновый режим
+                if (localStorage.getItem('neonMode') === 'true') {
+                    document.body.classList.add('neon-mode');
+                }
                 
                 const toggleMenuBtn = document.getElementById('toggleMenu');
                 const closeMenuBtn = document.getElementById('closeMenu');
