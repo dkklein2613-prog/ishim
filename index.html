@@ -4120,19 +4120,6 @@
         </div>
 
         <!-- Chat Modal -->
-        <div id="infoModal" class="info-modal hidden">
-            <div class="info-modal-header">
-                <h2 class="info-modal-title">Информация по объекту</h2>
-                <button onclick="closeInfoModal()" class="info-modal-close">
-                    <i data-feather="x" class="w-5 h-5"></i>
-                </button>
-            </div>
-            <div class="info-modal-content" id="infoModalContent">
-                <!-- Сюда вставляется описание -->
-            </div>
-        </div>
-
-        <!-- Chat Modal -->
         <div id="chatModal" class="chat-modal hidden">
             <div class="chat-modal-header">
                 <!-- <button onclick="closeChatModal(); loadBrigades();" class="chat-brigade-btn" title="Открыть бригады">
@@ -5831,57 +5818,92 @@
         
         // Инициализация всех новых возможностей
         function initAllEnhancements() {
-            initSwipeActions();
-            initContextMenu();
-            initScrollBookmarks();
+            console.log('🔄 Инициализация UX улучшений...');
             
-            // Восстанавливаем режим просмотра из localStorage
-            const savedViewMode = localStorage.getItem('viewMode');
-            if (savedViewMode) {
-                switchViewMode(savedViewMode);
-            }
-            
-            // Показываем кнопки управления при загрузке товаров
-            const observer = new MutationObserver(() => {
-                const productList = document.querySelector('.product-list');
-                if (productList && currentProducts.length > 0) {
-                    document.getElementById('viewModeToggle')?.classList.remove('hidden');
-                    updateFloatingInfoPanel();
+            try {
+                // Проверяем наличие необходимых элементов
+                const requiredElements = [
+                    'ghostComparisonLayer',
+                    'floatingInfoPanel',
+                    'viewModeToggle',
+                    'scrollBookmarks',
+                    'contextMenu'
+                ];
+                
+                const missingElements = requiredElements.filter(id => !document.getElementById(id));
+                if (missingElements.length > 0) {
+                    console.warn('⚠️ Отсутствуют элементы:', missingElements);
                 }
                 
-                // Добавляем long press на кнопки назад
-                const backButtons = document.querySelectorAll('.back-button');
-                backButtons.forEach(btn => {
-                    let backPressTimer = null;
+                initSwipeActions();
+                initContextMenu();
+                initScrollBookmarks();
+                
+                // Восстанавливаем режим просмотра из localStorage
+                const savedViewMode = localStorage.getItem('viewMode');
+                if (savedViewMode) {
+                    switchViewMode(savedViewMode);
+                }
+                
+                // Показываем кнопки управления при загрузке товаров
+                const contentElement = document.getElementById('content');
+                if (!contentElement) {
+                    console.error('❌ Элемент content не найден');
+                    return;
+                }
+                
+                const observer = new MutationObserver(() => {
+                    const productList = document.querySelector('.product-list');
+                    if (productList && currentProducts.length > 0) {
+                        const viewToggle = document.getElementById('viewModeToggle');
+                        if (viewToggle) {
+                            viewToggle.classList.remove('hidden');
+                        }
+                        updateFloatingInfoPanel();
+                    }
                     
-                    btn.addEventListener('touchstart', (e) => {
-                        backPressTimer = setTimeout(() => {
-                            e.preventDefault();
-                            showNavStackMenu();
-                            if (tg?.HapticFeedback) {
-                                tg.HapticFeedback.impactOccurred('heavy');
+                    // Добавляем long press на кнопки назад
+                    const backButtons = document.querySelectorAll('.back-button');
+                    backButtons.forEach(btn => {
+                        // Проверяем, не добавлены ли уже обработчики
+                        if (btn.dataset.longPressAdded) return;
+                        btn.dataset.longPressAdded = 'true';
+                        
+                        let backPressTimer = null;
+                        
+                        btn.addEventListener('touchstart', (e) => {
+                            backPressTimer = setTimeout(() => {
+                                e.preventDefault();
+                                showNavStackMenu();
+                                if (tg?.HapticFeedback) {
+                                    tg.HapticFeedback.impactOccurred('heavy');
+                                }
+                            }, 500);
+                        });
+                        
+                        btn.addEventListener('touchend', () => {
+                            if (backPressTimer) {
+                                clearTimeout(backPressTimer);
                             }
-                        }, 500);
-                    });
-                    
-                    btn.addEventListener('touchend', () => {
-                        if (backPressTimer) {
-                            clearTimeout(backPressTimer);
-                        }
-                    });
-                    
-                    btn.addEventListener('touchmove', () => {
-                        if (backPressTimer) {
-                            clearTimeout(backPressTimer);
-                        }
+                        });
+                        
+                        btn.addEventListener('touchmove', () => {
+                            if (backPressTimer) {
+                                clearTimeout(backPressTimer);
+                            }
+                        });
                     });
                 });
-            });
-            
-            observer.observe(document.getElementById('content'), {
-                childList: true,
-                subtree: true
-            });
+                
+                observer.observe(contentElement, {
+                    childList: true,
+                    subtree: true
+                });
+                
+                console.log('✅ UX улучшения успешно инициализированы');
+            } catch (error) {
+                console.error('❌ Ошибка в initAllEnhancements:', error);
+            }
         }
 
         // УНИВЕРСАЛЬНАЯ ФУНКЦИЯ ДЛЯ ОТОБРАЖЕНИЯ ИЗОБРАЖЕНИЙ
@@ -8508,57 +8530,23 @@
         }
 
         function renderSearchResults(query, products) {
-            // Группируем результаты по категориям
-            const grouped = {};
-            products.forEach(product => {
-                const categoryKey = product.category || 'Без категории';
-                if (!grouped[categoryKey]) {
-                    grouped[categoryKey] = [];
-                }
-                grouped[categoryKey].push(product);
-            });
-            
             let html = `
-                <div class="mb-4">
-                    <p class="mb-3 text-sm" style="color: var(--text-primary);">
-                        Найдено товаров: <strong>${products.length}</strong>
-                    </p>
-                </div>
-                
-                <!-- Облако популярных тегов поиска -->
-                <div class="search-tags-cloud" style="margin-bottom: 16px;">
-                    <div class="search-tag" onclick="performSearch('профлист')">Профлист</div>
-                    <div class="search-tag" onclick="performSearch('металлочерепица')">Металлочерепица</div>
-                    <div class="search-tag" onclick="performSearch('сайдинг')">Сайдинг</div>
-                    <div class="search-tag" onclick="performSearch('утеплитель')">Утеплитель</div>
-                    <div class="search-tag" onclick="performSearch('гвозди')">Гвозди</div>
-                </div>
-                
-                <!-- Сгруппированные результаты -->
-                <div class="search-results-grouped">
+                <p class="mb-3 text-sm" style="color: var(--text-primary);">
+                    Найдено товаров: <strong>${products.length}</strong>
+                </p>
+                <div class="product-list">
             `;
             
-            Object.entries(grouped).forEach(([category, items]) => {
-                html += `
-                    <div class="search-group">
-                        <div class="search-group-header">
-                            <span>${escapeHtml(category)} (${items.length})</span>
-                            <i data-feather="chevron-down" class="search-group-toggle"></i>
-                        </div>
-                        <div class="search-group-items">
-                            <div class="product-list" style="margin-top: 12px;">
-                `;
+            products.forEach((product, index) => {
+                const productId = generateProductId(product);
+                const isFavorite = favorites.some(fav => fav.id === productId);
+                const color = safeString(product.color, 'Не указан');
+                const price = product.price ? formatPriceForBadge(product.price) : 'Цена не указана';
+                const specialPrice = product.special_price ? formatPriceForBadge(product.special_price) : null;
+                const photoUrl = safeString(product.photo_url);
                 
-                items.forEach((product, index) => {
-                    const productId = generateProductId(product);
-                    const isFavorite = favorites.some(fav => fav.id === productId);
-                    const color = safeString(product.color, 'Не указан');
-                    const price = product.price ? formatPriceForBadge(product.price) : 'Цена не указана';
-                    const specialPrice = product.special_price ? formatPriceForBadge(product.special_price) : null;
-                    const photoUrl = safeString(product.photo_url);
-                    
-                    const userId = tg?.initDataUnsafe?.user?.id;
-                    const showSpecialPrice = userId && SPECIAL_PRICE_USER_IDS.includes(userId) && product.special_price && specialPrice;
+                const userId = tg?.initDataUnsafe?.user?.id;
+                const showSpecialPrice = userId && SPECIAL_PRICE_USER_IDS.includes(userId) && product.special_price && specialPrice;
                 
                 let imageUrl = extractPhotoFilenameFromUrl(photoUrl);
                 const alternativeUrls = getAlternativeImageUrls(photoUrl);
@@ -8607,35 +8595,13 @@
                         </div>
                     </div>
                 `;
-                });
-                
-                html += `
-                            </div>
-                        </div>
-                    </div>
-                `;
             });
             
-            html += `
-                </div>
-                <button onclick="closeSearchResults()" class="back-button">
-                    <i data-feather="arrow-left" class="w-4 h-4 mr-2"></i>
-                    Вернуться к каталогу
-                </button>
-            `;
+            html += '</div>';
             
             elements.content.innerHTML = html;
             currentProducts = products;
             scheduleFeatherReplace();
-            
-            // Добавляем функционал сворачивания групп
-            document.querySelectorAll('.search-group-header').forEach(header => {
-                header.addEventListener('click', () => {
-                    const group = header.parentElement;
-                    group.classList.toggle('collapsed');
-                    scheduleFeatherReplace();
-                });
-            });
         }
 
         function closeSearchResults() {
@@ -8667,7 +8633,17 @@
                 initSearch();
                 
                 // ========== ИНИЦИАЛИЗАЦИЯ НОВЫХ UX УЛУЧШЕНИЙ ==========
-                initAllEnhancements();
+                // Временно отключено для отладки
+                /*
+                setTimeout(() => {
+                    try {
+                        initAllEnhancements();
+                        console.log('✅ UX улучшения инициализированы');
+                    } catch (error) {
+                        console.error('❌ Ошибка инициализации UX улучшений:', error);
+                    }
+                }, 1000);
+                */
                 
                 const toggleMenuBtn = document.getElementById('toggleMenu');
                 const closeMenuBtn = document.getElementById('closeMenu');
