@@ -3093,7 +3093,11 @@
                     </button>
                     <button onclick="contactAboutCurrentProduct()" class="product-detail-btn">
                         <i data-feather="message-circle" class="w-5 h-5"></i>
-                        Узнать подробнее
+                        НАПИСАТЬ
+                    </button>
+                    <button onclick="contactAboutCheaperPrice()" class="product-detail-btn product-detail-btn-full" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-color: #10b981;">
+                        <i data-feather="trending-down" class="w-5 h-5"></i>
+                        Нашел дешевле? Жми!
                     </button>
                 </div>
             </div>
@@ -3942,11 +3946,22 @@
                 `;
 
                 html += `
-                    <div class="mt-3">
+                    <div class="mt-2">
                         <button onclick="contactAboutSpecificProductFromFavorites(${index})" 
                                 class="w-full py-3 tg-theme-button rounded-lg transition font-medium flex items-center justify-center">
                             <i data-feather="message-circle" class="w-4 h-4 mr-2"></i>
-                            Узнать подробнее
+                            НАПИСАТЬ
+                        </button>
+                    </div>
+                `;
+
+                html += `
+                    <div class="mt-2">
+                        <button onclick="contactAboutCheaperPriceFromList(${index}, true)" 
+                                class="w-full py-3 rounded-lg transition font-medium flex items-center justify-center"
+                                style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-color: #10b981; color: white;">
+                            <i data-feather="trending-down" class="w-4 h-4 mr-2"></i>
+                            Нашел дешевле? Жми!
                         </button>
                     </div>
                 `;
@@ -4793,6 +4808,121 @@
                 tg.openTelegramLink(`https://t.me/StroiBatIshimMagazin?text=${encodeURIComponent(message)}`);
             } else {
                 window.open(`https://t.me/StroiBatIshimMagazin?text=${encodeURIComponent(message)}`, '_blank');
+            }
+        }
+        
+        async function contactAboutCheaperPrice() {
+            if (!currentProductDetail) return;
+            
+            const navigation = getCurrentNavigation();
+            
+            const productInfo = [
+                navigation.section?.name,
+                navigation.category?.name,
+                navigation.model?.name,
+                navigation.submodel?.name,
+                currentProductDetail.color,
+                currentProductDetail.price && currentProductDetail.price !== 'Цена не указана' ? currentProductDetail.price : ''
+            ].filter(Boolean).join(' → ');
+
+            const message = `Здравствуйте!\n${productInfo} НАШЕЛ ДЕШЕВЛЕ\nхочу обсудить с вами стоимость`;
+            
+            // Получаем URL фото товара
+            const photoUrl = currentProductDetail.photo_url || '';
+            
+            try {
+                // Отправляем запрос через API
+                const response = await fetch(`${API_BASE}/send_product_inquiry`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_id: tg?.initDataUnsafe?.user?.id || 'unknown',
+                        product_info: productInfo,
+                        photo_url: photoUrl,
+                        message: message
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Показываем уведомление об успешной отправке
+                    if (tg) {
+                        tg.showAlert('✅ Ваш запрос отправлен! Администратор свяжется с вами в ближайшее время.');
+                    } else {
+                        alert('✅ Ваш запрос отправлен! Администратор свяжется с вами в ближайшее время.');
+                    }
+                } else {
+                    throw new Error('Ошибка отправки');
+                }
+            } catch (error) {
+                console.error('Ошибка отправки запроса:', error);
+                // В случае ошибки открываем обычный чат
+                if (tg) {
+                    tg.openTelegramLink(`https://t.me/StroiBatIshimMagazin?text=${encodeURIComponent(message)}`);
+                } else {
+                    window.open(`https://t.me/StroiBatIshimMagazin?text=${encodeURIComponent(message)}`, '_blank');
+                }
+            }
+        }
+        
+        async function contactAboutCheaperPriceFromList(index, isFavorites) {
+            const product = isFavorites ? favoriteProducts[index] : currentProducts[index];
+            if (!product) return;
+            
+            const navigation = getCurrentNavigation();
+            
+            const productInfo = [
+                navigation.section?.name,
+                navigation.category?.name,
+                navigation.model?.name,
+                navigation.submodel?.name,
+                product.color,
+                product.price && product.price !== 'Цена не указана' ? product.price : ''
+            ].filter(Boolean).join(' → ');
+
+            const message = `Здравствуйте!\n${productInfo} НАШЕЛ ДЕШЕВЛЕ\nхочу обсудить с вами стоимость`;
+            
+            // Получаем URL фото товара
+            const photoUrl = product.photo_url || '';
+            
+            try {
+                // Отправляем запрос через API
+                const response = await fetch(`${API_BASE}/send_product_inquiry`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_id: tg?.initDataUnsafe?.user?.id || 'unknown',
+                        product_info: productInfo,
+                        photo_url: photoUrl,
+                        message: message
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Показываем уведомление об успешной отправке
+                    if (tg) {
+                        tg.showAlert('✅ Ваш запрос отправлен! Администратор свяжется с вами в ближайшее время.');
+                    } else {
+                        alert('✅ Ваш запрос отправлен! Администратор свяжется с вами в ближайшее время.');
+                    }
+                } else {
+                    throw new Error('Ошибка отправки');
+                }
+            } catch (error) {
+                console.error('Ошибка отправки запроса:', error);
+                // В случае ошибки открываем обычный чат
+                if (tg) {
+                    tg.openTelegramLink(`https://t.me/StroiBatIshimMagazin?text=${encodeURIComponent(message)}`);
+                } else {
+                    window.open(`https://t.me/StroiBatIshimMagazin?text=${encodeURIComponent(message)}`, '_blank');
+                }
             }
         }
         
@@ -5966,11 +6096,22 @@
                 `;
 
                 html += `
-                    <div class="mt-3">
+                    <div class="mt-2">
                         <button onclick="contactAboutSpecificProduct(${index})" 
                                 class="w-full py-3 tg-theme-button rounded-lg transition font-medium flex items-center justify-center">
                             <i data-feather="message-circle" class="w-4 h-4 mr-2"></i>
-                            Узнать подробнее
+                            НАПИСАТЬ
+                        </button>
+                    </div>
+                `;
+
+                html += `
+                    <div class="mt-2">
+                        <button onclick="contactAboutCheaperPriceFromList(${index}, false)" 
+                                class="w-full py-3 rounded-lg transition font-medium flex items-center justify-center"
+                                style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-color: #10b981; color: white;">
+                            <i data-feather="trending-down" class="w-4 h-4 mr-2"></i>
+                            Нашел дешевле? Жми!
                         </button>
                     </div>
                 `;
@@ -6748,11 +6889,20 @@
                                 </button>
                             </div>
 
-                            <div class="mt-3">
+                            <div class="mt-2">
                                 <button onclick="contactAboutSpecificProduct(${index})" 
                                         class="w-full py-3 tg-theme-button rounded-lg transition font-medium flex items-center justify-center">
                                     <i data-feather="message-circle" class="w-4 h-4 mr-2"></i>
-                                    Узнать подробнее
+                                    НАПИСАТЬ
+                                </button>
+                            </div>
+
+                            <div class="mt-2">
+                                <button onclick="contactAboutCheaperPriceFromList(${index}, false)" 
+                                        class="w-full py-3 rounded-lg transition font-medium flex items-center justify-center"
+                                        style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-color: #10b981; color: white;">
+                                    <i data-feather="trending-down" class="w-4 h-4 mr-2"></i>
+                                    Нашел дешевле? Жми!
                                 </button>
                             </div>
                         </div>
